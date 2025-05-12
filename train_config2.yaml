@@ -1,0 +1,54 @@
+# --- General Training Configuration ---
+experiment_name: "dualfocus_msrvtt_exp01" # Unique name for this experiment run
+output_dir: "./training_output"        # Base directory for logs and checkpoints
+seed: 43       #42                       # Random seed for reproducibility
+resume_from_checkpoint: true         # Set to true to attempt resuming from the latest checkpoint
+
+# --- Dataset Configuration ---
+dataset:
+  name: "MSRVTT"                      # Options: "MSRVTT", "MSVD"
+  train_json_path: "../video_data/MSRVTT/MSRVTT-QA/train_qa.json" # Path to training JSON
+  val_json_path: "../video_data/MSRVTT/MSRVTT-QA/val_qa.json"    # Path to validation JSON
+  video_dir: "../video_data/MSRVTT/MSRVTT/MSRVTT_Videos"         # Path to video files (e.g., videoXXXX.mp4)
+  num_frames_r: -2                    # Number of frames for QA-ViT path (-1 for all, -2 for sqrt(N))
+  num_frames_m: -2                   # Number of frames for ViT path (-1 for all, -2 for sqrt(N))
+
+# --- Dataloader Configuration ---
+dataloader:
+  batch_size_per_device: 1            # Batch size per GPU
+  num_workers: 4                      # Number of workers for data loading
+
+# --- Model Configuration (matches DualFocusVideoQA __init__) ---
+model:
+  qvit_model_config:
+    qa_instruction_point: 'late'
+    instruction_dim: 4096             # Should match LLM hidden dim (auto-set in DualFocus if llm loaded first)
+    hidden_dim: 1408                  # QA-ViT output dim
+    eva_img_size: 224
+    drop_path_rate: 0.0
+    image_processor_id: "../models/vit_image_processor" # Processor for QA-ViT
+    cached_file: "../models/eva_vit_g.pth"             # QA-ViT weights
+  vit_model_id: "../models/siglip"      # Path or ID for the second vision model (e.g., Siglip or Dino)
+  llm_model_id: "../models/vicuna"      # Path or ID for the LLM
+  qformer_model_id: "../models/instruct_blip_vicuna7b_trimmed.pth" # Q-Former checkpoint or base model ID ('bert-base-uncased')
+  qformer_num_query: 32
+  qformer_max_txt_len: 128
+  dinov2_output_layer: -2             # Relevant if using DinoV2
+  max_frames: 32                      # Max frames expected by internal buffers (e.g., pos encoding)
+  feature_map_intermediate_dim: null  # Optional intermediate dim for projector, null for default
+  freeze_llm: true
+  freeze_vit: true                    # Freeze the second vision model base
+  freeze_qvit_base: true              # Freeze QA-ViT base
+  freeze_qformer_base: true           # Freeze Q-Former BERT base
+
+# --- Training Procedure ---
+training:
+  num_epochs: 3
+  save_steps: 300                   # Save checkpoint every N training steps (processed items)
+  eval_steps: 300                   # Evaluate on validation set every N steps
+  # Optimizer/Scheduler params are usually in deepspeed config, but can be here for reference
+  # learning_rate: 1e-5
+  # weight_decay: 0.01
+
+# --- DeepSpeed Configuration ---
+deepspeed_config_path: "train_ds_config2.json"

@@ -1,0 +1,61 @@
+# train_config.yaml
+
+experiment_name: "dualfocus_msrvtt_exp1" # Unique name for this training run
+
+# --- Model Configuration ---
+model:
+  qvit_model_config:
+    qa_instruction_point: 'late'
+    instruction_dim: 4096     # LLM hidden dim - Will be overwritten in train.py
+    hidden_dim: 1408          # QA-ViT output dim
+    eva_img_size: 224
+    drop_path_rate: 0.0
+    image_processor_id: "../models/vit_image_processor" # Path to QA-ViT image processor config/files
+    cached_file: "../models/eva_vit_g.pth"          # Path to QA-ViT pre-trained weights
+
+  vit_model_id: "../models/siglip"   # Path or HF ID for the second vision encoder (e.g., SigLIP)
+  llm_model_id: "../models/vicuna"   # Path or HF ID for the LLM
+  qformer_model_id: "../models/instruct_blip_vicuna7b_trimmed.pth" # Path to Q-Former checkpoint or 'bert-base-uncased'
+  qformer_num_query: 32
+  qformer_max_txt_len: 128
+  dinov2_output_layer: -1         # Layer index for VIT output (if applicable)
+  max_frames: 32                  # Max frames sampled *per path* by dataloader
+  feature_map_intermediate_dim: null # Optional intermediate dim for projector
+
+  # --- Freezing ---
+  freeze_llm: true
+  freeze_vit: true                # Assumes feature extractor handles internal freezing
+  freeze_qvit_base: true
+  freeze_qformer_base: true
+
+# --- Data Configuration ---
+data:
+  dataset_name: "MSRVTT"           # Options: "MSRVTT", "MSVD"
+  train_json_path: "../video_data/MSRVTT/MSRVTT-QA/train_qa.json"
+  val_json_path: "../video_data/MSRVTT/MSRVTT-QA/val_qa.json"
+  video_dir: "../video_data/MSRVTT/MSRVTT/MSRVTT_Videos"
+  num_frames_r: 32                 # Num frames for rough path (QA-ViT)
+  num_frames_m: 8                  # Num frames for meticulous path (VIT)
+  batch_size: 4                    # Per-GPU batch size (micro-batch size)
+  num_workers: 4                   # DataLoader workers
+
+# --- Training Configuration ---
+training:
+  num_epochs: 10
+  gradient_accumulation_steps: 8   # Effective batch size = batch_size * num_gpus * grad_accum
+  # Learning rate and scheduler params are primarily taken from ds_config.json
+  # warmup_steps_ratio: 0.1        # Optional: Calculate warmup steps as ratio of total steps
+
+  log_interval: 10                 # Log training loss every N steps
+  checkpoint_interval_samples: 10000 # Save trainable weights every N samples processed
+  eval_interval_steps: 500         # Evaluate on validation set every N global steps (optimizer steps)
+  max_grad_norm: 1.0               # Gradient clipping value (also in ds_config)
+
+# --- Paths and System ---
+output_dir: "./training_output"      # Base directory for logs and checkpoints
+mixed_precision: "fp16"            # "fp16", "bf16", or "no"
+seed: 42
+
+# --- Accelerator/DeepSpeed ---
+accelerator:
+  deepspeed_config_path: "./ds_config.json" # Path to the DeepSpeed config file

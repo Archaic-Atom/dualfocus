@@ -1,0 +1,81 @@
+{
+  "train_batch_size": "auto",           # 全局批量大小（将计算为：train_micro_batch_size_per_gpu * gradient_accumulation_steps * num_gpus）
+  "train_micro_batch_size_per_gpu": "auto", # 每个 GPU 一步处理的 Batch size
+  "gradient_accumulation_steps": "auto",  # 在 N 个微批次上累积梯度
+  "gradient_clipping": 1.0,             # 裁剪渐变以防止爆炸
+
+  "optimizer": {
+    "type": "AdamW",                    # 优化器类型（例如，AdamW、FusedAdam）
+    "params": {
+      "lr": "auto",                     # 学习率 （将由 accelerator 根据 config 或默认值设置）
+      "betas": [0.9, 0.999],
+      "eps": 1e-8,
+      "weight_decay": 0.01              # 权重衰减
+    }
+  },
+
+  "scheduler": {
+    "type": "WarmupLR",                 # 学习率调度器类型（例如，WarmupLR、CosineAnnealingLR）
+    "params": {
+      "warmup_min_lr": 0,
+      "warmup_max_lr": "auto",          # Max LR （通常与优化器 LR 相同）
+      "warmup_num_steps": 100           # 预热步骤数
+    }
+  },
+
+  "zero_optimization": {
+    "stage": 3,                         # ZeRO 第 3 阶段：分区模型、梯度和优化器状态
+    "offload_optimizer": {              # 可选：将优化器状态卸载到 CPU
+      "device": "cpu",
+      "pin_memory": true
+    },
+    "offload_param": {                  # 可选：将模型参数卸载到 CPU
+      "device": "cpu",
+      "pin_memory": true
+    },
+    "overlap_comm": true,               # 重叠通信与计算
+    "contiguous_gradients": true,       # 提高内存效率
+    "sub_group_size": 1e9,              # 控制参数分区粒度
+    "reduce_bucket_size": 5e8,       # 梯度减少的缓冲区大小
+    "stage3_prefetch_bucket_size": 5e8, # 参数预取的 Bucket 大小
+    "stage3_param_persistence_threshold": 1e5, # GPU 上要保留的最小参数大小
+    "stage3_max_live_parameters": 1e9,  # GPU 上驻留的参数的大约最大数量
+    "stage3_max_reuse_distance": 1e9,
+    "gather_16bit_weights_on_model_save": true # 在保存之前合并权重（重要！）
+  },
+
+  "zero_optimization": {
+        "stage": 2,
+        "offload_optimizer": {
+            "device": "cpu",
+            "pin_memory": true
+          },
+          "offload_param": {
+            "device": "cpu",
+            "pin_memory": true
+          },
+        "overlap_comm": true,
+        "contiguous_gradients": true,
+        "sub_group_size": 1e9,
+        "reduce_bucket_size": "auto"
+    }
+
+
+  "fp16": {                             # 混合精度训练（如果支持和首选，请使用 bf16）
+    "enabled": true,                   # 启用 FP16
+    "loss_scale": 0,                    # 0 用于动态损失缩放
+    "loss_scale_window": 1000,
+    "hysteresis": 2,
+    "min_loss_scale": 1
+  },
+  # "bf16": { "enabled": false },      # 如果需要，请使用 bf16 而不是 fp16，并且硬件支持它
+  "activation_checkpointing": {
+    "partition_activations": true,         // 分割激活 (需要较新 DeepSpeed 版本)
+    "cpu_checkpointing": true,             // 将检查点的激活卸载到 CPU
+    "contiguous_memory_optimization": true, // 通常推荐开启
+    "synchronize_checkpoint_boundary": false // 通常设为 False 以获得更好性能
+  },
+
+  "steps_per_print": 2000,              # DeepSpeed 记录内部信息的频率
+  "wall_clock_breakdown": false         # 开启详细的时序细分
+}
