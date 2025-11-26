@@ -1,0 +1,84 @@
+# eval_config.yaml
+
+device: "cuda"
+output_base_dir: "./eval_results/activity"
+seed: 42
+
+# --- eval_generate.py setting ---
+generator_settings:
+  model_init_params:
+    qvit_model_config:
+      qa_instruction_point: 'late'
+      instruction_dim: 4096
+      hidden_dim: 1408
+      eva_img_size: 224
+      drop_path_rate: 0.0
+      image_processor_id: "../models/vit_image_processor"
+      cached_file: "../models/eva_vit_g.pth"
+    vit_model_id: "../models/eva"
+    llm_model_id: "../models/vicuna"
+    qformer_model_id: "../models/instruct_blip_vicuna7b_trimmed.pth"
+    qformer_num_query: 32
+    max_frames: 500
+    feature_map_intermediate_dim: null
+    dtype: "float16"
+
+    freeze_llm: true
+    freeze_vit: true
+    freeze_qvit_base: true
+    freeze_qformer_base: true
+
+
+  # load_trainable_weights
+  load_trained_components_config:
+
+    load_trained_components: true
+    trained_components_dir: "./training_output/dualfocus_instrcut_exp01"
+    trained_components_step: 37500
+
+  data_loader:
+#    dataset_name: "MSRVTT"
+#    val_json_path: "../video_data/MSRVTT/MSRVTT-QA/val_qa.json"
+#    video_dir: "../video_data/MSRVTT/MSRVTT/MSRVTT_Videos"
+#    num_frames_r: -2
+#    num_frames_m: -2
+#    batch_size: 1
+#    num_workers: 2
+
+#    dataset_name: "MSVD"
+#    val_json_path: "../video_data/MSVD/MSVD-QA/test_qa.json"
+#    video_dir: "../video_data/MSVD/YouTubeClips"
+#    mapping_path: '../video_data/MSVD/youtube_mapping.txt'
+#    num_frames_r: -2
+#    num_frames_m: -2
+#    batch_size: 1
+#    num_workers: 2
+
+    dataset_name: "Activity"
+    q_path: '/data/datasets/activitynet/activitynet-qa/test_q.json'
+    a_path: '/data/datasets/activitynet/activitynet-qa/test_a.json'
+    video_dir: "/data/datasets/activitynet/videos"
+    num_frames_r: -2
+    num_frames_m: -2
+    batch_size: 1
+    num_workers: 2
+
+#    dataset_name: "Benchmark"
+#    annotation_path: '/data/datasets/activitynet/benchmarkqa/consistency_q2a.json'
+#    video_dir: "/data/datasets/activitynet/videos"
+#    num_frames_r: -2
+#    num_frames_m: -2
+#    batch_size: 1
+#    num_workers: 2
+
+
+
+  generation_output:
+    filename: "predictions_test.jsonl"
+  llm_generation_params:
+    max_new_tokens: 300
+    temperature: 0.9
+    top_p: 0.6
+    do_sample: true
+  max_data_len: -1
+  device_map_strategy: "custom"

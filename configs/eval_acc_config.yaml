@@ -1,0 +1,22 @@
+
+# --- 通用设置 ---
+device: "cuda"
+output_base_dir: "./eval_results/msrvtt"
+seed: 42
+
+# --- eval_acc.py setting ---
+accuracy_evaluator_settings:
+
+  predictions_file: "predictions.jsonl"
+
+  # GPT
+  use_gpt_eval: true
+  gpt_output_subdir: "gpt_eval_details"
+  gpt_summary_filename: "gpt_eval_summary.json"
+
+  openai_api_key: ""
+  openai_api_base: null
+  gpt_model: "gpt-3.5-turbo"
+  num_gpt_tasks: 8
+
+  simple_eval_metrics: ["exact_match"]
