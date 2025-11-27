@@ -30,7 +30,7 @@ To synergize these representations, we introduce the **Focus Feature Projector (
 
 We evaluate DualFocus on comprehensive benchmarks, including four open-ended Zero-shot VideoQA datasets and the Video-ChatGPT generation benchmark.
 
-### 1. Zero-shot Video Question Answering (Table I)
+### 1. Zero-shot Video Question Answering
 Comparison with SOTA methods on **MSVD-QA**, **MSRVTT-QA**, **ActivityNet-QA**, and **TGIF-QA**. We report both Accuracy (%) and Score (0-5).
 *   **LoRA**: Indicates whether LoRA fine-tuning was applied to the LLM.
 *   **DualFocus** achieves SOTA performance across all datasets **without** fine-tuning the LLM (keeping Vicuna-7B frozen).
@@ -48,7 +48,7 @@ Comparison with SOTA methods on **MSVD-QA**, **MSRVTT-QA**, **ActivityNet-QA**, 
 | GASET | 73.4 / 3.9 | 59.7 / 3.3 | 51.4 / 3.4 | 74.9 / 4.1 |
 | **DualFocus (Ours)** | **74.8** / **4.1** | **62.7** / **3.6** | **51.9** / 3.5 | **77.6** / **4.2** |
 
-### 2. Video-Based Text Generation (Table II)
+### 2. Video-Based Text Generation
 Performance on the **Video-ChatGPT Benchmark** across five key dimensions:
 *   **CI**: Correctness of Information
 *   **DO**: Detail Orientation
