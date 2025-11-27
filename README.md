@@ -80,15 +80,15 @@ Performance on the **Video-ChatGPT Benchmark** across five key dimensions:
 
 2.  **Create a Conda environment:**
     ```bash
-    conda create -n dualfocus python=3.9
+    conda create -n dualfocus python=3.10
     conda activate dualfocus
     ```
 
 3.  **Install dependencies:**
-    Ensure you have `accelerate` and `deepspeed` correctly configured for your system.
     ```bash
     pip install -r requirements.txt
     ```
+    Ensure you have `accelerate` and `deepspeed` correctly configured for your system.
 
 ## 📦 Model Weights
 
@@ -114,14 +114,14 @@ python train.py --config configs/train_config.yaml
 ### 4. Evaluation
 To reproduce the results in our paper:
 
-**Video Question Answering (Zero-shot):**
+**1.Get Video Generation:**
 ```bash
-python eval_acc.py --dataset msrvtt --model_path models/dualfocus_checkpoint
+python eval_generate.py --config configs/eval_config.yaml
 ```
 
-**Video Generation Benchmark:**
+**2.Video Generation Evaluation:**
 ```bash
-python eval_generate.py --benchmark video_chatgpt --model_path models/dualfocus_checkpoint
+python eval_acc.py --config configs/eval_acc_config.yaml
 ```
 
 <!-- 
