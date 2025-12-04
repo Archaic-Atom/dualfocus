@@ -20,7 +20,7 @@ This repository contains the official implementation of the paper **"DualFocus: 
 To synergize these representations, we introduce the **Focus Feature Projector (FFP)**, which integrates the dual-stream information through an interactive attention mechanism. This results in a high-quality visual representation using only **32 tokens per second**, achieving State-of-the-Art (SOTA) performance on major video benchmarks while significantly reducing computational overhead.
 
 <div align="center">
-    <img src="assets/framework.png" alt="DualFocus Framework" width="100%">
+    <img src="assets/framework.svg" alt="DualFocus Framework" width="100%">
     <br>
     <em>Figure 1: The overall architecture of DualFocus. The video is processed in parallel by Semantic and Spatio-temporal streams, then fused by the Focus Feature Projector (FFP) before entering the LLM.</em>
 </div>
