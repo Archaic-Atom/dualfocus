@@ -32,7 +32,6 @@ We evaluate DualFocus on comprehensive benchmarks, including four open-ended Zer
 
 ### 1. Zero-shot Video Question Answering
 Comparison with SOTA methods on **MSVD-QA**, **MSRVTT-QA**, **ActivityNet-QA**, and **TGIF-QA**. We report both Accuracy (%) and Score (0-5).
-*   **LoRA**: Indicates whether LoRA fine-tuning was applied to the LLM.
 *   **DualFocus** achieves SOTA performance across all datasets **without** fine-tuning the LLM (keeping Vicuna-7B frozen).
 
 | Method | MSVD-QA<br>(Acc / Score) | MSRVTT-QA<br>(Acc / Score) | ActivityNet-QA<br>(Acc / Score) | TGIF-QA<br>(Acc / Score) |
